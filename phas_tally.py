@@ -13,7 +13,6 @@ GHOST_NAMES = [
     "Oni", "Onryo", "Phantom", "Poltergeist", "Raiju", "Revenant", "Shade", "Spirit", "Thaye",
     "The Mimic", "The Twins", "Wraith", "Yokai", "Yurei"
 ]
-
 # Load tally counts from file
 def load_tally_counts():
     if os.path.exists(TALLY_FILE):
@@ -65,9 +64,9 @@ def display_bar_chart():
 
     plt.figure(figsize=(10, 6))
     plt.bar(entries, counts, color=colors)
-    plt.xlabel('Entries')
+    plt.xlabel('Ghosts')
     plt.ylabel('Counts')
-    plt.title('Tally Counts Bar Chart')
+    plt.title('Phasmophobia Ghost Tracker')
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     plt.show()
@@ -76,16 +75,24 @@ def display_bar_chart():
 def display_pie_chart():
     entries = list(tally_counts.keys())
     counts = list(tally_counts.values())
+    
+    # Filter out entries with zero counts
+    filtered_entries = [entry for entry, count in zip(entries, counts) if count > 0]
+    filtered_counts = [count for count in counts if count > 0]
+    
+    if not filtered_counts:
+        messagebox.showinfo("No Data", "No data available to display in the pie chart.")
+        return
+
     cmap = plt.colormaps.get_cmap('tab20')
-    colors = [cmap(i / len(entries)) for i in range(len(entries))]
+    colors = [cmap(i / len(filtered_entries)) for i in range(len(filtered_entries))]
 
     plt.figure(figsize=(8, 8))
-    plt.pie(counts, labels=entries, colors=colors, autopct='%1.1f%%', startangle=140)
-    plt.title('Tally Counts Pie Chart')
+    plt.pie(filtered_counts, labels=filtered_entries, colors=colors, autopct='%1.1f%%', startangle=140)
+    plt.title('Phasmophobia Ghost Tracker')
     plt.axis('equal')
     plt.tight_layout()
     plt.show()
-
 # Initialize tally counts
 tally_counts = load_tally_counts()
 
